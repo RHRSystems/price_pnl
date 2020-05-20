@@ -1,0 +1,238 @@
+import sys,os,argparse
+from datetime import date, time, datetime
+from yahoo_fin import stock_info as si
+from iexfinance.stocks import Stock
+
+tok="<token>"
+
+dict_names = {
+              "vti":"e","vgt":"e","voo":"e",
+              "tjx":"s",
+              "fskax":"m","fxaix":"m"
+             }
+
+dict_indexes = {
+                "^dji":"Dow","^spx":"SP500","^ixic":"Nasdaq","^tnx":"10Year","^ftse":"FTSE"
+               }
+
+dict_holdings = {
+                 "vteb":100,"skyy":200,"tjx":300
+                }
+
+
+def getArgs():
+
+        ap = argparse.ArgumentParser()
+        ap.add_argument("-t", "--type", help="i or s or m or or p or x")
+        ap.add_argument("-x", "--symbol", help="symbol")
+        args = vars(ap.parse_args())
+        t = args["type"]
+        x = args["symbol"]
+
+        if x:
+            if len(x) > 4:
+                print("Only check individual stocks/etfs")
+            else:
+                getX(x,tok)
+            return
+
+        if t == "i":
+            for key,val in sorted(dict_indexes.items()):
+                getI(key,val)
+
+        elif t == "s":
+            for key,val in sorted(dict_names.items()):
+                if val == "s" or val == "e":
+                   getS(key,tok)
+
+        elif t == "p":
+            getP(tok)
+
+        elif t == "m":
+            for key,val in sorted(dict_names.items()):
+                if val == "m":
+                   getM(key)
+        else:
+            # Full run
+            for key,val in sorted(dict_indexes.items()):
+                getI(key,val)
+
+            print()
+
+            for key,val in sorted(dict_names.items()):
+                if val == "s" or val =="e":
+                   getS(key,tok)
+
+            print()
+
+            for key,val in sorted(dict_names.items()):
+                if val == "m":
+                   getM(key)
+
+            print()
+
+            getP(tok)
+
+        print("")
+        now = datetime.now()
+        print(time(now.hour, now.minute, now.second))
+
+
+def place_value(number):
+    return ("{:,}".format(number))
+
+
+def getS(sym,tok):
+     # Get stock/etf pricing
+     t = Stock(sym, token=tok)
+
+     try:
+        y = round(t.get_quote()['ytdChange']*100,2)
+
+     except Exception as e:
+        y = "N/A"
+
+     P = si.get_quote_table("" + sym + "")
+
+     dif1 = P['Quote Price'] - P['Previous Close']
+     dif2 = (P['Quote Price'] / P['Previous Close'] * 100) - 100
+
+     print("{} --> \tcurr: {} \tprev: {} \tdiff: {} ({}%) \tytd: ({}%)".format(sym,\
+             round(P['Quote Price'],2),\
+             round(P['Previous Close'],2),\
+             round(dif1,2), round(dif2,2),y
+          )
+     )
+
+
+def getX(sym,tok):
+     # For individual stock/etf
+     t = Stock(sym, token=tok)
+
+     try:
+        y = round(t.get_quote()['ytdChange']*100,2)
+
+     except Exception as e:
+        y = "N/A"
+
+     P = si.get_quote_table("" + sym + "")
+
+     dif1 = P['Quote Price'] - P['Previous Close']
+     dif2 = (P['Quote Price'] / P['Previous Close'] * 100) - 100
+
+     print("{} ==> \tcurr: {} \tprev: {} \tdiff: {} ({}%) \tytd: ({}%)".format(sym,\
+             round(P['Quote Price'],2),\
+             round(P['Previous Close'],2),\
+             round(dif1,2), round(dif2,2),y
+          )
+     )
+
+     #now check for a position
+     getPX(sym,tok)
+
+
+def getI(sym,desc):
+     # Get index pricing
+     P = si.get_quote_table("" + sym + "")
+
+     dif1 = P['Quote Price'] - P['Previous Close']
+     dif2 = (P['Quote Price'] / P['Previous Close'] * 100) - 100
+
+     print("{}\tcurr: {} \tprev: {} \tdiff: {} ({}%)".format(desc,\
+             round(P['Quote Price'],2),\
+             round(P['Previous Close'],2),\
+             round(dif1,2), round(dif2,2)
+          )
+     )
+
+
+def getM(sym):
+    # Get mutual fund details
+    P = si.get_quote_table("" + sym + "")
+    print("{} --> \tprev: {} \tytd: {} \texp ratio: {} \tbeta: {}".format(sym,\
+            P['Previous Close'],\
+            P['YTD Return'],\
+            P['Expense Ratio (net)'],\
+            P['Beta (5Y Monthly)']
+           )
+    )
+
+
+def getPX(s,tok):
+     # Get pricing/pnl for individual stock/etf
+     global dict_holdings
+
+     for key,val in sorted(dict_holdings.items()):
+
+         sym = key
+         qty = val
+
+         if sym == s:
+
+            t = Stock(sym, token=tok)
+            P = si.get_quote_table("" + sym + "")
+
+            p1 = P['Quote Price'] * qty
+            p2 = P['Previous Close'] * qty
+
+            print("\t\tcurr: ${} \tprev: ${} \tdiff: ${}".format(place_value(round(p1)),\
+                    place_value(round(p2)),place_value(round(p1 - p2))
+                 )
+            )
+
+     print()
+
+
+def getP(tok):
+     # Get PnL
+     global dict_holdings
+     tott = 0
+     toty = 0
+
+     for key,val in sorted(dict_holdings.items()):
+
+         sym = key
+         qty = val
+
+         if len(key) < 5: #different data for mutual funds
+
+            t = Stock(sym, token=tok)
+            P = si.get_quote_table("" + sym + "")
+
+            p1 = P['Quote Price'] * qty
+            p2 = P['Previous Close'] * qty
+
+            tott += p1
+            toty += p2
+
+            print("{} --> \tcurr: ${} \tprev: ${} \tdiff: ${}".format(sym,\
+                 place_value(round(p1)),place_value(round(p2)),place_value(round(p1 - p2))
+                 )
+            )
+
+         else:
+
+            P = si.get_quote_table("" + sym + "")
+            p1 = P['Previous Close'] * qty
+
+            tott += p1
+            toty += p1
+
+            print("{} --> \tcurr: ${} \tprev: ${} \tdiff: ${}".format(sym,\
+                 place_value(round(p1)),place_value(round(p1)),round(p1 - p1)
+                 )
+            )
+
+     print()
+
+     print("Today: \t\tcurr: ${} \tprev: ${} \tdiff: ${} ({}%)".format(\
+            place_value(round(tott)),place_value(round(toty)),\
+            place_value(round(tott - toty)),\
+            round((((tott / toty)* 100) - 100),3)
+          )
+     )
+
+
+if __name__ == '__main__':
+
+    getArgs()
