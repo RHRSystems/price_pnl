@@ -18,12 +18,16 @@ With no arguments:
 examples:
 
           price_pnl -t i (returns pricing for your predefined Indexes)
+          ![indexes](https://github.com/RHRSystems/price_pnl/i.png)
           
           price_pnl -t s (returns pricing for your predefined Stocks/ETFs)
+          ![stocks](https://github.com/RHRSystems/price_pnl/s.png)
           
           price_pnl -t m (returns limited pricing for your predefined Mutual Funds)
+          ![funds](https://github.com/RHRSystems/price_pnl/m.png)
           
           price_pnl -t p (returns day PnL for your predefined positions)
+          ![pnl](https://github.com/RHRSystems/price_pnl/p.png)
 
 
 
@@ -32,5 +36,5 @@ examples:
 examples:
 
           price_pnl -x csco (returns pricing for csco then day PnL if you have a position in it)
-          
+          ![one](https://github.com/RHRSystems/price_pnl/x.png)
           
