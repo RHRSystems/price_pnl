@@ -16,21 +16,25 @@ With no arguments:
 -t (type)
 
 examples:
-
-          price_pnl -t i (returns pricing for your predefined Indexes)
-          
+price_pnl -t i (returns pricing for your predefined Indexes)
           <img src="images/i.png">
-          
-          price_pnl -t s (returns pricing for your predefined Stocks/ETFs)
-          
-          price_pnl -t m (returns limited pricing for your predefined Mutual Funds)
-          
-          price_pnl -t p (returns day PnL for your predefined positions)
 
+price_pnl -t s (returns pricing for your predefined Stocks/ETFs)
+          <img src="images/s.png">
 
+price_pnl -t m (returns limited pricing for your predefined Mutual Funds)
+          <img src="images/m.png">
+
+price_pnl -t p (returns limited pricing for your predefined Mutual Funds)
+          <img src="images/p.png">
+          
+          
 -x (check for one synmbol)
 
-examples:
-
-          price_pnl -x csco (returns pricing for csco then day PnL if you have a position in it)
+example:
+price_pnl -x csco (returns pricing for csco then day PnL if you have a position in it)
+          <img src="images/x.png">
+          
+          
+          
           
