@@ -19,6 +19,8 @@ examples:
 
           price_pnl -t i (returns pricing for your predefined Indexes)
           
+          <img src="https://github.com/RHRSystems/price_pnl/images/i.png">
+          
           price_pnl -t s (returns pricing for your predefined Stocks/ETFs)
           
           price_pnl -t m (returns limited pricing for your predefined Mutual Funds)
