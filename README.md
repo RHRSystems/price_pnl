@@ -19,8 +19,7 @@ examples:
 
           price_pnl -t i (returns pricing for your predefined Indexes)
           
-          <img src="https://github.com/RHRSystems/price_pnl/images/i.png">
-          ![alt text](i.png?raw=true)
+          <img src="images/i.png">
           
           price_pnl -t s (returns pricing for your predefined Stocks/ETFs)
           
