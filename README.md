@@ -18,7 +18,8 @@ With no arguments:
 examples:
 
           price_pnl -t i (returns pricing for your predefined Indexes)
-          ![indexes](https://github.com/RHRSystems/price_pnl/i.png)
+          ![indexes](https://github.com/RHRSystems/price_pnl/blob/master/i.png)
+          ![indexes](./price_pnl/i.png)
           
           price_pnl -t s (returns pricing for your predefined Stocks/ETFs)
           ![stocks](https://github.com/RHRSystems/price_pnl/s.png)
